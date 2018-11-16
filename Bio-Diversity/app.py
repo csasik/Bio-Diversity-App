@@ -21,7 +21,10 @@ app = Flask(__name__)
 #app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
 #db = SQLAlchemy(app)
 
-engine = create_engine("sqlite:///db/bellybutton.sqlite", connect_args={'check_same_thread': False})
+DATABASE_URL = os.environ.get("DATABASE_URL", "") or "sqlite:///db/bellybutton.sqlite"
+engine = create_engine(DATABASE_URL, connect_args={'check_same_thread': False})
+
+#engine = create_engine("sqlite:///db/bellybutton.sqlite", connect_args={'check_same_thread': False})
 
 session = Session(engine)
 # reflect an existing database into a new model
