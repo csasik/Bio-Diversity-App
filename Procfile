@@ -1,1 +1,1 @@
-web: gunicorn bio-diversity-app:app.py
+web: gunicorn Bio-Diversity-app:app.py
