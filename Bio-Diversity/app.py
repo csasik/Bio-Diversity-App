@@ -48,7 +48,7 @@ def names():
 
     # Use Pandas to perform the sql query
     stmt = db.session.query(Samples).statement
-    df = pd.read_sql_query(stmt, session.bind)
+    df = pd.read_sql_query(stmt, db.session.bind)
 
     # Return a list of the column names (sample names)
     return jsonify(list(df.columns)[2:])
