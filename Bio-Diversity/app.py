@@ -8,8 +8,8 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 
-from flask import Flask, jsonify, render_template
-# from flask_sqlalchemy import SQLAlchemy
+#from flask import Flask, jsonify, render_template
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
@@ -18,19 +18,19 @@ app = Flask(__name__)
 # Database Setup
 #################################################
 
-#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
-#db = SQLAlchemy(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "") or "sqlite:///db/bellybutton.sqlite"
+db = SQLAlchemy(app)
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "") or "sqlite:///db/bellybutton.sqlite"
-engine = create_engine(DATABASE_URL, connect_args={'check_same_thread': False})
+#DATABASE_URL = os.environ.get("DATABASE_URL", "") or "sqlite:///db/bellybutton.sqlite"
+#engine = create_engine(DATABASE_URL, connect_args={'check_same_thread': False})
 
 #engine = create_engine("sqlite:///db/bellybutton.sqlite", connect_args={'check_same_thread': False})
 
-session = Session(engine)
+#session = Session(engine)
 # reflect an existing database into a new model
 Base = automap_base()
 # reflect the tables
-Base.prepare(engine, reflect=True)
+Base.prepare(db.engine, reflect=True)
 
 # Save references to each table
 Samples_Metadata = Base.classes.sample_metadata
@@ -48,7 +48,7 @@ def names():
     """Return a list of sample names."""
 
     # Use Pandas to perform the sql query
-    stmt = session.query(Samples).statement
+    stmt = db.session.query(Samples).statement
     df = pd.read_sql_query(stmt, session.bind)
 
     # Return a list of the column names (sample names)
@@ -68,7 +68,7 @@ def sample_metadata(sample):
         Samples_Metadata.WFREQ,
     ]
 
-    results = session.query(*sel).filter(Samples_Metadata.sample == sample).all()
+    results = db.session.query(*sel).filter(Samples_Metadata.sample == sample).all()
 
     # Create a dictionary entry for each row of metadata information
     sample_metadata = {}
@@ -88,8 +88,8 @@ def sample_metadata(sample):
 @app.route("/samples/<sample>")
 def samples(sample):
     """Return `otu_ids`, `otu_labels`,and `sample_values`."""
-    stmt = session.query(Samples).statement
-    df = pd.read_sql_query(stmt, session.bind)
+    stmt = db.session.query(Samples).statement
+    df = pd.read_sql_query(stmt, db.session.bind)
 
     # Filter the data based on the sample number and
     # only keep rows with values above 1
