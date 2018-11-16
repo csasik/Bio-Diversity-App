@@ -149,15 +149,12 @@ function buildCharts(sample) {
             };
 
         let trace2 = {
-          type:"scatter",
           text: otu_labels,
           x: otu_ids,
-          y: sample_values,
+          y: response.sample_values,
           mode : 'markers',
           marker: {
-            size: size, 
-            sizeref: 1000 ** Math.max([size]) ,
-            sizemode: 'area',
+            size: response.sample_values, 
             color: otu_ids
           }
         }    
@@ -170,7 +167,10 @@ function buildCharts(sample) {
         let layout2 = {
           title:"Sample Metadata",
           xaxis:{title:'OTU_ID'},
-          yaxis:{title:'Values'}
+          yaxis:{title:'Values'},
+          hovermode:'closest',
+          width:1100,
+          height:500
          };
       
       
